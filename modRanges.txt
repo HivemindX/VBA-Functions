@@ -6,6 +6,8 @@ Function GetColumnNumber(sColumnName As String) As Long
 
     Dim lResult As Long
 
+    On Error GoTo labelError
+
     If Len(sColumnName) = 1 Then
         ' If the column name is only a single character it is trivial to determine the result using ASCII codes (A=65, etc)
         lResult = Asc(sColumnName) - 64
@@ -18,5 +20,67 @@ Function GetColumnNumber(sColumnName As String) As Long
     End If
 
     GetColumnNumber = lResult
+
+labelEnd:
+    Exit Function
+
+labelError:
+    Resume labelEnd
+
+End Function
+
+End Function
+
+Function GetLastCol(ws As Worksheet, Optional lRow As Long) As Long
+
+    Dim lResult As Long
+    Dim lLastCol As Long
+    
+    On Error GoTo labelError
+    
+    If lRow = 0 Then
+        For lRow = 1 To GetLastRow(ws)
+            lLastCol = ws.Cells(lRow, ws.Columns.Count).End(xlToLeft).Column
+            If lLastCol > lResult Then
+                lResult = lLastCol
+            End If
+        Next lRow
+    Else
+        lResult = ws.Cells(lRow, ws.Columns.Count).End(xlToLeft).Column
+    End If
+    
+    GetLastCol = lResult
+labelEnd:
+    Exit Function
+
+labelError:
+    Resume labelEnd
+
+End Function
+
+Function GetLastRow(ws As Worksheet, Optional lCol As Long) As Long
+
+    Dim lResult As Long
+    Dim lLastRow As Long
+    
+    On Error GoTo labelError
+    
+    If lCol = 0 Then
+        For lCol = 1 To ws.Columns.Count
+            lLastRow = ws.Cells(ws.Rows.Count, lCol).End(xlUp).row
+            If lLastRow > lResult Then
+                lResult = lLastRow
+            End If
+        Next lCol
+    Else
+        lResult = ws.Cells(ws.Rows.Count, lCol).End(xlUp).row
+    End If
+    
+    GetLastRow = lResult
+labelEnd:
+    Exit Function
+
+labelError:
+    Resume labelEnd
 
 End Function
