@@ -1,0 +1,38 @@
+Function GetSPCode(sFilename As String) As String
+
+    Dim lPosition As Long
+    Dim lLength As Long
+
+    Const STRING_SP_CODE_ID_IN_PROJ_FILE_NAME As String = ";sp;"
+
+    'Get subproduct number
+    If InStr(sFilename, "#") <> 0 Then
+        ' For old format filenames the SP code is whatever comes after the #
+        GetSPCode = Mid(sFilename, InStr(sFilename, "#") + 1, Len(sFilename) - InStr(sFilename, "#") - 5)
+    ElseIf InStr(1, sFilename, STRING_SP_CODE_ID_IN_PROJ_FILE_NAME, vbTextCompare) <> 0 Then
+        ' For new format filenames the SP code is between the ;sp; and the next ;
+        lPosition = InStr(sFilename, STRING_SP_CODE_ID_IN_PROJ_FILE_NAME) + Len(STRING_SP_CODE_ID_IN_PROJ_FILE_NAME)
+        lLength = InStr(lPosition, sFilename, ";") - lPosition
+        If lLength > 0 Then
+            GetSPCode = Mid(sFilename, lPosition, lLength)
+        End If
+    End If
+
+End Function
+
+Function GetProdID(sFilename As String) As String
+
+    Dim lStrLength As Long
+    
+    'Get product ID
+    If InStr(sFilename, "#") <> 0 Then
+        ' For old format filenames the product ID is whatever comes before the #
+        GetProdID = Left(sFilename, InStrRev(sFilename, "#") - 1)
+    ElseIf InStr(1, sFilename, ";", vbTextCompare) <> 0 Then
+        ' For old format filenames the product ID is whatever comes before the first ;
+        lStrLength = InStr(sFilename, ";") - 1
+        GetProdID = Left(sFilename, lStrLength)
+    End If
+
+End Function
+
